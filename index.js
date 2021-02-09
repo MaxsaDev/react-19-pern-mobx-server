@@ -16,6 +16,9 @@ sequelize - ORM для автоматизации запросов
 cors - для обращения из браузера к нашему серверу
 dotenv - для установки переменных окружения
 -D nodemon - для автоматической перезагрузки сервера
+express-fileupload - для загрузки и выгрузки изображений (файлов)
+jsonwebtoken
+bcrypt
 */
 
 //для считывания данных переменных окружения
@@ -28,10 +31,13 @@ const sequelize = require('./db')
 const models = require('./models/models')
 //cors - для возможности отправлять запросы из браузера
 const cors = require('cors')
+//импортируем функции для раоты с файлами
+const fileUpload = require('express-fileupload')
 //импортируем основной, связующий роутер
 const router = require('./routes/index')
 //импортируем middleware для ошибок
 const errorHandler = require('./middleware/ErrorHandlingMiddleware')
+const path = require('path')
 
 
 //получаем порт на котором будет работать сервер из переменных окружения (.env)
@@ -41,6 +47,10 @@ const app = express()
 app.use(cors())
 //для парсинга json-формата
 app.use(express.json())
+//необходимо указать, что файлы из папки static нужно получать как статику
+app.use(express.static(path.resolve(__dirname, 'static' )))
+//регистрируем функции для работы с файлами, в параметрах передаем пустой объект с опциями
+app.use(fileUpload({}))
 //вызываем use для роутера c 1- url по которому роутер обрабатывается, а 2 - сам роутер
 app.use('/api', router)
 
